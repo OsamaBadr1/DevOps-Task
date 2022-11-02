@@ -1,0 +1,18 @@
+---
+kube_external_proxy:
+  hosts:
+    proxy.cluster.local:
+
+kube_master:
+  hosts:
+    master.cluster.local:
+
+kube_workers:
+  hosts:
+    worker1.cluster.local:
+    worker2.cluster.local:
+
+kube_cluster:
+    children:
+      kube_master:
+      kube_workers:

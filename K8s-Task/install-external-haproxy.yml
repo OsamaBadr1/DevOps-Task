@@ -1,0 +1,6 @@
+---
+- name: Install HAProxy as external proxy
+  hosts: kube_external_proxy
+  gather_facts: no
+  roles:
+    - install-external-haproxy

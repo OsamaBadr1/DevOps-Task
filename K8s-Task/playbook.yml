@@ -1,0 +1,6 @@
+---
+- import_playbook: install-external-haproxy.yml
+- import_playbook: cluster-preperation.yml
+- import_playbook: initialize-master.yml
+- import_playbook: join-worker.yml
+- import_playbook: deploy-juice-shop-app.yml

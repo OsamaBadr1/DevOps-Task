@@ -1,0 +1,6 @@
+---
+- name: Prepare Cluster Master and Workers nodes
+  hosts: kube_cluster
+  gather_facts: no
+  roles:
+    - cluster-preperation

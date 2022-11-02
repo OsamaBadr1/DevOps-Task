@@ -1,0 +1,6 @@
+---
+- name: Full installation of the master node
+  hosts: kube_master
+  gather_facts: no
+  roles:
+    - initialize-master

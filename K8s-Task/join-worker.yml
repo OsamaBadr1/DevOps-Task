@@ -1,0 +1,6 @@
+---
+- name: Join all worker nodes
+  hosts: kube_workers
+  gather_facts: no
+  roles:
+    - join-worker

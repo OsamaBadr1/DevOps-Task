@@ -1,0 +1,28 @@
+---
+# tasks file for roles/deploy-juice-shop-app
+- name: Create the "Juice Shop" app namespace
+  shell: |
+    kubectl create ns juice-shop
+
+- name: Deploy the "Juice Shop" application
+  shell: |
+    kubectl -n juice-shop create deployment juice-shop --image=bkimminich/juice-shop
+
+- name: Expose the "Juice Shop" application inside the cluster
+  shell: |
+    kubectl -n juice-shop expose deploy juice-shop --port 80 --target-port 3000
+
+- name: Copy the "Juice Shop" ingress resource to kubernetes master node
+  copy:
+    src: ingress-resource.yml
+    dest: /home/ansible
+    
+- name: Wait ten minutes for nginx ingress controller to be ready
+  pause:
+    minutes: 10
+  
+- name: Expose the "Juice Shop" application to outside the cluster
+  shell: |
+    kubectl apply -f /home/ansible/ingress-resource.yml
+  tags:
+    - external-access

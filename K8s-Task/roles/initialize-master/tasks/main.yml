@@ -1,0 +1,32 @@
+---
+# tasks file for roles/initialize-master
+- name: Initialize the cluster master node
+  shell: kubeadm init --pod-network-cidr=10.10.0.0/16
+
+- name: Configure ansible user to use Kubernetes api (1/2)
+  file:
+    path: /home/ansible/.kube
+    state: directory
+    owner: ansible
+    group: ansible
+
+- name: Configure ansible user to use Kubernetes api (2/2)
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/ansible/.kube/config
+    remote_src: yes
+    owner: ansible
+    group: ansible
+
+- name: Configure network
+  become: false
+  block:
+    - name: Install networking solution (calico)
+      shell: kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+
+    - name: Install ingress controller (nginx)
+      shell: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.4.0/deploy/static/provider/baremetal/deploy.yaml
+
+    - name: Configure the ingress controller nodeport service to match the external proxy port
+      shell: |
+        kubectl -n ingress-nginx patch svc ingress-nginx-controller -p '{"spec": {"ports": [{"port": 443,"targetPort": "https","nodePort": 30443,"name": "https"},{"port": 80,"targetPort": "http","nodePort": 30080,"name": "http"}],"type": "NodePort"}}'
